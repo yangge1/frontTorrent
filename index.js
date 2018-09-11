@@ -88,11 +88,11 @@ function parseT(tort){
     var timeX=setTimeout(function(){
        
 
-        client.remove(tort.hash,function(s){
-            config.continue2=true;
-            config.faildT.push(tort.hash);
-        })
-    },1000)
+        // client.remove(tort.hash,function(s){
+        //     config.continue2=true;
+        //     config.faildT.push(tort.hash);
+        // })
+    },60*1000)
     config.continue2=false;
     client.add(tort.hash,{ path: './path' }, function (torrent) {
         console.log(torrent)
