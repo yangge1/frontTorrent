@@ -9,7 +9,10 @@ var config={
     skip:1,
     continue2:true,
     faildT:[],
-    x:0
+    x:0,
+    length:0,
+    interval:0,
+    intervals:1
 }
 var torrentIds=[
 //    'magnet:?xt=urn:btih:fce8058186c7ae314563a87a2c0239c93d77e250',
@@ -33,14 +36,18 @@ var torrentIds=[
 var metadata=[],simpleMeta=[];
 start();
 function start(){
-    setInterval(function(){
+    config.intervals=setInterval(function(){
         magnetTotorrent()
-    },2*1000)
+    },100)
 }
 function magnetTotorrent(){
-    if(!config.continue2) return;
+  // if(!config.continue2) return;
+
     var torrent=torrentIds.shift();
     if(!torrent){
+        if(config.interval){
+            clearInterval(config.intervals)
+        }
         config.continue2=false;
         config.skip++;
        return getMagnet();
@@ -57,6 +64,13 @@ function getMagnet(){
             console.error('data.data is empty');
             return;
         }
+        config.length+=data.data.length;
+        console.log(config.length,'proceing')
+        if(data.data.length<100){
+            console.log(data.data.length,'finished')
+            config.interval=1;
+          //  process.exit();
+        }
     torrentIds=data.data;
     config.continue2=true;
     config.x=0;
@@ -69,14 +83,19 @@ function getMagnet(){
   })
 }
 function parseT(tort){
+    var s=config.x;
+
     var timeX=setTimeout(function(){
+       
+
         client.remove(tort.hash,function(s){
             config.continue2=true;
             config.faildT.push(tort.hash);
         })
-    },30*1000)
+    },1000)
     config.continue2=false;
     client.add(tort.hash,{ path: './path' }, function (torrent) {
+        console.log(torrent)
         clearTimeout(timeX);
         deselected(torrent);
         parseTorrent(torrent)
@@ -87,7 +106,7 @@ client.on('error', function (err) {
     console.error(err);
 })
 function parseTorrent(torrent){
-    console.log(metadata,55555555555555555555555555555)
+    
     // if(metadata.length>=1){
     //     console.log('remote connect',1111111111111111111)
     //     axios.post('http://yxysq.com:8888/api/torrent/addDetail',metadata.splice(0,100))
