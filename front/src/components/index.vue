@@ -25,7 +25,7 @@
               <BreadcrumbItem>Components</BreadcrumbItem>
               <BreadcrumbItem>Layout</BreadcrumbItem>
             </Breadcrumb>
-            <i-input :style="{height: '100px;',background:'none;','border-color': '#043;'}" search enter-button placeholder="Enter something..." />
+            <i-input on-click="doSearch(searchStr)" :value.sync="searchStr" search enter-button placeholder="Enter something..." />
           </Content>
           <Footer class="layout-footer-center">2011-2016 &copy;
 
@@ -36,12 +36,19 @@
   </div>
 </template>
 <script>
+  import fetch from '../server/api'
   export default {
 
     name: 'Index',
     data() {
       return {
-        msg: 'Welcome to Your Vue.js App'
+        torrents: [],
+        count:0
+      }
+    },
+    methods:{
+      doSearch(str){
+        this.$router.push({path:'tlist',query:{search:this.searchStr}})
       }
     }
   }
