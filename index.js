@@ -148,11 +148,9 @@ function parseTorrent(torrent){
     })
 
     if(metadata.length>=1){
-        console.log('remote connect',1111111111111111111)
         axios.post('http://yxysq.com:8888/api/torrent/addDetail',metadata.splice(0,100))
     }
     if(simpleMeta.length>=1){
-        console.log('remote connect',22222222222222222)
         axios.post('http://yxysq.com:8888/api/torrent/addList',simpleMeta.splice(0,100))
     }
 }
