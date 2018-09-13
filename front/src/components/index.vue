@@ -2,53 +2,38 @@
   <div class="index-view">
     <div class="pos-bg"><img src="../assets/index.jpg" alt="" width="100%" height="100%"></div>
     <div class="pos-search">
-      <div class="layout">
-        <Layout>
-          <Header>
-            <Menu mode="horizontal" theme="dark" active-name="1">
-              <div class="layout-logo"></div>
-              <div class="layout-nav">
-                <MenuItem name="1">
-                <Icon type="ios-navigate"></Icon>Item 1 </MenuItem>
-                <MenuItem name="2">
-                <Icon type="ios-keypad"></Icon>Item 2 </MenuItem>
-                <MenuItem name="3">
-                <Icon type="ios-analytics"></Icon>Item 3 </MenuItem>
-                <MenuItem name="4">
-                <Icon type="ios-paper"></Icon>Item 4 </MenuItem>
-              </div>
-            </Menu>
-          </Header>
-          <Content :style="{padding: '0 50px'}">
-            <Breadcrumb :style="{margin: '20px 0'}">
-              <BreadcrumbItem>Home</BreadcrumbItem>
-              <BreadcrumbItem>Components</BreadcrumbItem>
-              <BreadcrumbItem>Layout</BreadcrumbItem>
-            </Breadcrumb>
-            <i-input on-click="doSearch(searchStr)" :value.sync="searchStr" search enter-button placeholder="Enter something..." />
-          </Content>
-          <Footer class="layout-footer-center">2011-2016 &copy;
-
-            TalkingData</Footer>
-        </Layout>
-      </div>
+      <el-container>
+        <el-header>Header</el-header>
+        <el-main>
+          <el-input placeholder="请输入内容"  v-model="searchStr" class="input-with-select">
+            <el-button @click="doSearch(searchStr)" slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+        </el-main>
+        <el-footer>Footer</el-footer>
+      </el-container>
     </div>
   </div>
 </template>
 <script>
-  import fetch from '../server/api'
   export default {
 
     name: 'Index',
     data() {
       return {
         torrents: [],
-        count:0
+        count: 0,
+        searchStr: ''
       }
     },
-    methods:{
-      doSearch(str){
-        this.$router.push({path:'tlist',query:{search:this.searchStr}})
+    methods: {
+      doSearch(str) {
+        console.log(1111111111111)
+        this.$router.push({
+          path: 'tlist',
+          query: {
+            search: this.searchStr
+          }
+        })
       }
     }
   }
@@ -56,7 +41,6 @@
 </script>
 < !-- Add "scoped" attribute to limit CSS to this component only -->
   <style lang='less' scoped>
-
     .index-view {
       height: 100%;
 
@@ -75,64 +59,33 @@
         left: 0px;
         top: 0px;
 
-        .layout {
+        .el-container {
           height: 100%;
-          background: none;
+        }
 
-          .ivu-layout {
-            height: 100%;
-            background: none;
-           
-            .ivu-input-group {
-              top: 50%;
-              margin-top: -20px;
-              position: absolute;
-              width: calc(~"100% - 100px");
+        .el-main {
+          height: calc(~"100% - 60px");
 
-            }
-          }
         }
 
       }
     }
 
-    .layout {
-      border: 1px solid #d7dde4;
-      background: #f5f7f9;
-      position: relative;
-      border-radius: 4px;
-      overflow: hidden;
+  </style>
+  <style lang="css" scoped>
+    .el-input-group {
+      position: absolute;
+      width: calc(~"100% - 42px");
+      top: 50%;
+      height: 50px;
+      margin-top: -30px;
     }
-
-    .layout-logo {
-      width: 100px;
-      height: 30px;
-      background: #5b6270;
-      border-radius: 3px;
-      float: left;
-      position: relative;
-      top: 15px;
-      left: 20px;
+.el-input-group__append{
+      background: #37803c33;
+}
+    .el-input__inner {
+      background: #37803c66;
+      height: 50px;
     }
-
-    .layout-nav {
-      width: 420px;
-      margin: 0 auto;
-      margin-right: 20px;
-    }
-
-    .layout-footer-center {
-      text-align: center;
-    }
-
-    
 
   </style>
-<style lang="css">
-    .ivu-input-group .ivu-input{
-        height: 50px;
-                 background: none;
-            border-color: #043;
-            font-size: 26px;
-    }
-</style>

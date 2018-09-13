@@ -1,7 +1,10 @@
 <template>
   <div class="list-view">
       <div class="header">
-          <i-input on-click="" :value.sync="searchStr" search enter-button placeholder="Enter something..." />
+          <el-input placeholder="请输入内容"  v-model="searchStr" class="input-with-select">
+            <el-button @click="doSearch(searchStr)" slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+        
       </div>
       <div class="body">
           <div v-for="torrent in torrents">
@@ -11,12 +14,16 @@
           </div>
       </div>
       <div class="footer">
-          <Page :total="total" :page-size="pageSize" :current="current"></Page>
+          <el-pagination
+    layout="prev, pager, next"
+    :current-page.sync="current"
+    :total="total">
+  </el-pagination>
       </div>
   </div>
 </template>
 <script>
-import fetch from '../server/api'
+import {getCount,getTorrents} from '../server/api'
 export default {
   data(){
       return {
@@ -29,12 +36,12 @@ export default {
   },
   methods:{
       async doSearch(str){
-        this.total=await fetch.getCount({name:str});
-        let torrents=await fetch.getTorrents({name:str,skip:0,limit:100});
+        this.total=await getCount({name:str});
+        let torrents=await getTorrents({name:str,skip:0,limit:100});
         this.torrents=torrents;
       },
       async getList(skip,){
-        let torrents=await fetch.getTorrents({name:this.searchStr,skip:0,limit:this.pageSize});
+        let torrents=await getTorrents({name:this.searchStr,skip:0,limit:this.pageSize});
         this.torrents=torrents;
       }
   },
@@ -42,10 +49,14 @@ export default {
     this.doSearch(this.searchStr)
   },
   beforeRouteEnter (to, from, next) {
-      next(vm=>{
-          vm.searchStr=to.params;
+      if(from.name==='Index'){
+       return next(vm=>{
+          vm.searchStr=to.query.searchStr;
           
       })
+      }
+      next()
+      
   }
 }
 </script>
