@@ -1,24 +1,28 @@
 <template>
   <div class="list-view">
       <div class="header">
-          <el-input placeholder="请输入内容"  v-model="searchStr" class="input-with-select">
-            <el-button @click="doSearch(searchStr)" slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="请输入内容"  v-model="torrent.searchStr" @keyup.enter.native="doSearch(torrent.searchStr)" class="input-with-select">
+            <el-button @click="doSearch(torrent.searchStr)" slot="append" icon="el-icon-search"></el-button>
           </el-input>
         
       </div>
+      <div class="head-title">
+          <span class="name">display Name</span>
+            <span class="hash">infohash</span>
+            <span class="length">size</span>
+      </div>
       <div class="body">
-          <div v-for="torrent in torrents">
-            <span class="name">{{torrent.name}}</span>
-            <span class="hash">{{torrent.hash}}</span>
-            <span class="length">{{torrent.size}}</span>
+          <div v-for="tor in torrent.torrents" class="list-item" @click="toDetil(tor.hash)">
+
+            <span class="name" v-html="lihightStr(tor.name,torrent.searchStr)"></span>
+            <span class="hash">{{tor.hash}}</span>
+            <span class="length">{{tor.size}}</span>
           </div>
       </div>
       <div class="footer">
-          <el-pagination
-    layout="prev, pager, next"
-    :current-page.sync="current"
-    :total="total">
-  </el-pagination>
+          <el-pagination layout="prev, pager, next" :page-size="page.pageSize" :total="page.total" @current-change="currentPageChage">
+        </el-pagination>
+         
       </div>
   </div>
 </template>
@@ -27,31 +31,57 @@ import {getCount,getTorrents} from '../server/api'
 export default {
   data(){
       return {
-          torrents:[],
-          total:0,
-          pageSize:20,
-          current:0,
-          searchStr:''
+          torrent:{
+              torrents:[],
+              searchStr:'',
+              limit:100
+          },
+          
+          page:{
+              pageSize:100,
+              total:null,
+              current:0,
+          }
+          
+          
       }
   },
   methods:{
       async doSearch(str){
-        this.total=await getCount({name:str});
-        let torrents=await getTorrents({name:str,skip:0,limit:100});
-        this.torrents=torrents;
+        let countData=await getCount({filter:str});
+        this.page.total=countData;
+        let torrents=await getTorrents({filter:str,skip:1,limit:this.torrent.limit});
+        this.torrent.torrents=torrents;
       },
-      async getList(skip,){
-        let torrents=await getTorrents({name:this.searchStr,skip:0,limit:this.pageSize});
-        this.torrents=torrents;
+      currentPageChage(curPage){
+         this.getList(curPage)
+      },
+      lihightStr(name,htmlStr){
+        if(!name) return '';
+        if(!htmlStr) return name;
+        let strSearch=htmlStr.replace('\\','\\\\').replace('\/','\\\/');
+        let str=name.replace(new RegExp(`(${strSearch})`,'i'),"<span style=\'color:#f00\'>$1</span>");
+        return str;
+      },
+      toDetil(hash){
+          this.$router.push({
+          path: 'tdetail',
+          query: {
+            hash: hash
+          }
+        })
+      },
+      async getList(skip){
+        this.torrent.torrents=await getTorrents({filter:this.torrent.searchStr,skip:skip,limit:this.torrent.limit});
       }
   },
   mounted(){
-    this.doSearch(this.searchStr)
+    this.doSearch(this.torrent.searchStr)
   },
   beforeRouteEnter (to, from, next) {
       if(from.name==='Index'){
        return next(vm=>{
-          vm.searchStr=to.query.searchStr;
+          vm.torrent.searchStr=to.query.searchStr;
           
       })
       }
@@ -60,4 +90,64 @@ export default {
   }
 }
 </script>
+<style lang="less">
+   .list-view{
+       height: 100%;
+       
+    .head-title{
+        height: 30px;
+            line-height: 30px;
+    font-weight: bold;
+        .name,.hash,.size{
+                   display: inline-block;
+                   
+                   
+               }
+        .name{
+                   width: 60%;
+               }
+               .hash{
+                   width: 30%;
+               }
+               .size{
+                   width:10%;
+               }
+    }
+       .body{
+           height: calc(~"100% - 140px");
+           margin-top: 10px;
+           overflow: auto;
+           .list-item{
+               &:hover{
+                   color: #3eaf7c;
+                   cursor: pointer;
+               }
+               min-height: 30px;
+               margin-bottom: 10px;
+               &:nth-child(2n){
+background: #eee;
+               }
+               .name{
+                   width: 60%;
+               }
+               .hash{
+                   width: 30%;
+               }
+               .size{
+                   width:10%;
+               }
+               .name,.hash,.size{
+                   display: inline-block;
+                   
+                   
+               }
+               .name{
+                   
+               }
+           }
+    }
+   } 
+    
+</style>
+
 

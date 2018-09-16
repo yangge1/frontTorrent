@@ -11,7 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "circular-json": "^0.5.5",
+    "express": "^4.16.3",
     "simple-sha1": "^2.1.1",
     "webtorrent": "^0.102.4"
   }

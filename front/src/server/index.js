@@ -18,7 +18,7 @@ export default async (url='',data={},type='GET')=>{
            url:url,
            data:data
        })
-       return response;
+       return response.data.data;
        
     }catch(e){
         
