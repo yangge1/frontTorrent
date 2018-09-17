@@ -103,7 +103,7 @@ async function test(){
 
         client.remove(li,function(s){
             config.faildT.push(li);
-            diffList.splice(ind,1)
+            diffList.splice(diffList.indexOf(li),1)
         })
     },60*1000)
     client.add(li,{ path: './path' }, function (torrent) {
