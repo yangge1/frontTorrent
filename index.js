@@ -5,6 +5,7 @@ var axios=require('axios');
 var bencode=require('bencode');
 var fs=require('fs');
 var jsn=require('circular-json');
+var _=require('underscore');
 // app.use(bodyPaser.urlencoded({ extended: false ,limit: '2mb'}));
 // app.use(bodyPaser.json({limit: '2mb'}));
 var config={
@@ -62,12 +63,32 @@ function magnetTotorrent(){
     config.x++;
     parseT(torrent)
 }
-function test(){
+async function test(){
     var torrent=torrentIds.shift();
-    if(!torrent){
-        
+    let list=await axios.get('http://yxysq.com:8888/api/torrent/getListByDup');
+    let detail=await axios.get('http://yxysq.com:8888/api/torrent/getDetailByDup');
+    let listH=list.data.data;
+    let detailH=detail.data.data;
+    console.log(listH,33333333333);
+    console.log(detailH,4444444444444444444)
+   let diffList= _.difference(listH,detailH)
+    if(!_.isEmpty(diffList)){
+        console.log(diffList,'length:',diffList.length)
+        torrentIds=diffList;
+        setInterval(function(){
+            console.log(diffList,'length:',diffList.length)
+        },60*1000)
+        _.each(diffList,function(li,ind){
+            client.add(li,{ path: './path' }, function (torrent) {
+                console.log(torrent)
+                deselected(torrent);
+                parseTorrent(torrent)
+                diffList.splice(ind,1)
+              })
+        })
     }
-    parseT(torrent)
+    console.log(diffList,55555555555)
+  //  parseT(torrent)
 }
 
 function getMagnet(){
