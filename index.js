@@ -92,8 +92,13 @@ async function test(){
             console.log(diffList,'length:',diffList.length)
             console.log(config.faildT,'config.faildT.length:',config.faildT.length)
         },60*1000)
-        _.each(diffList,function(li,ind){
-    var timeX=setTimeout(function(){
+        let testT=setInterval(function(){
+            let li=diffList.shift();
+            if(!li){
+                clearInterval(testT);
+                return;
+            }
+            var timeX=setTimeout(function(){
        
 
         client.remove(li,function(s){
@@ -107,7 +112,8 @@ async function test(){
         deselected(torrent);
         parseTorrent(torrent)
       })
-        })
+        },100)
+        
     }
     console.log(diffList,55555555555)
   //  parseT(torrent)
