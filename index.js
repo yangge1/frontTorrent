@@ -4,14 +4,9 @@ var client = new WebTorrent()
 var axios=require('axios');
 var bencode=require('bencode');
 var fs=require('fs');
-const path=require('path');
-const bodyPaser=require('body-parser');
 var jsn=require('circular-json');
-var express=require('express');
-var app=express();
-app.use(express.static(path.resolve(__dirname,'/public')));
-app.use(bodyPaser.urlencoded({ extended: false ,limit: '2mb'}));
-app.use(bodyPaser.json({limit: '2mb'}));
+// app.use(bodyPaser.urlencoded({ extended: false ,limit: '2mb'}));
+// app.use(bodyPaser.json({limit: '2mb'}));
 var config={
     skip:1,
     continue2:true,
@@ -21,12 +16,12 @@ var config={
     interval:0,
     intervals:1
 }
-app.get('/api/torrent/listCount',function(req,res){
-    console.log('connection')
-    res.send('hello world');
-})
+// app.get('/api/torrent/listCount',function(req,res){
+//     console.log('connection')
+//     res.send('hello world');
+// })
 var torrentIds=[
-//    'magnet:?xt=urn:btih:fce8058186c7ae314563a87a2c0239c93d77e250',
+    // {hash:'magnet:?xt=urn:btih:70bf8d57726d9d1695a36a45079d737485c4118f'}
 //     'magnet:?xt=urn:btih:52F00B76BC3D0E85ADE9FCFAE7DC2CDEF15118BE',
 //      'AA7A926FDDD7A1F9399B95E2307C7497158466CF',
 //     'magnet:?xt=urn:btih:C8ABE375A2D9BDA2A840AFD3FDF6DA9DE20881DB',
@@ -46,6 +41,7 @@ var torrentIds=[
 //axios.post('http://yxysq.com:8888/api/torrent/addList',{body:[{name:'123',hash:'234',size:123}]})
 var metadata=[],simpleMeta=[];
 //start();
+test()
 function start(){
     config.intervals=setInterval(function(){
         magnetTotorrent()
@@ -66,6 +62,14 @@ function magnetTotorrent(){
     config.x++;
     parseT(torrent)
 }
+function test(){
+    var torrent=torrentIds.shift();
+    if(!torrent){
+        
+    }
+    parseT(torrent)
+}
+
 function getMagnet(){
     axios.get('http://yxysq.com:8888/api/getHash?skip='+config.skip+'&limit=100').then(function(res){
         //console.log(res.data)
@@ -193,4 +197,3 @@ function deselected(torrent){
     }
   }
 }
-app.listen(8888);
