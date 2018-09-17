@@ -22,6 +22,10 @@ var config={
 //     res.send('hello world');
 // })
 var torrentIds=[
+    // 'magnet:?xt=urn:btih:DC3E8A7E4B995116449D616583627F1D486AC6D1',
+    // 'magnet:?xt=urn:btih:C7E8FCD4DEF3D34CDC1C959A96ACA303C582E7B8',
+    // 'magnet:?xt=urn:btih:93C20335E2C896FB0C34F84240F749A09AA7E59D',
+    // 'magnet:?xt=urn:btih:8029F978BE46675D5963852CA74F152F8E62FA98'
     // {hash:'magnet:?xt=urn:btih:70bf8d57726d9d1695a36a45079d737485c4118f'}
 //     'magnet:?xt=urn:btih:52F00B76BC3D0E85ADE9FCFAE7DC2CDEF15118BE',
 //      'AA7A926FDDD7A1F9399B95E2307C7497158466CF',
@@ -42,6 +46,14 @@ var torrentIds=[
 //axios.post('http://yxysq.com:8888/api/torrent/addList',{body:[{name:'123',hash:'234',size:123}]})
 var metadata=[],simpleMeta=[];
 //start();
+// _.each(torrentIds,function(li,ind){
+//     client.add(li,{ path: './path' }, function (torrent) {
+//         console.log(torrent.infoHash,'success success')
+//         deselected(torrent);
+//         parseTorrent(torrent)
+//       //  diffList.splice(ind,1)
+//       })
+// })
 test()
 function start(){
     config.intervals=setInterval(function(){
@@ -65,7 +77,8 @@ function magnetTotorrent(){
 }
 async function test(){
     var torrent=torrentIds.shift();
-    let list=await axios.get('http://yxysq.com:8888/api/torrent/getListByDup');
+   // let list=await axios.get('http://yxysq.com:8888/api/torrent/getListByDup');
+    let list=await axios.get('http://yxysq.com:8888/api/getHashByDup');
     let detail=await axios.get('http://yxysq.com:8888/api/torrent/getDetailByDup');
     let listH=list.data.data;
     let detailH=detail.data.data;
@@ -77,14 +90,23 @@ async function test(){
         torrentIds=diffList;
         setInterval(function(){
             console.log(diffList,'length:',diffList.length)
+            console.log(config.faildT,'config.faildT.length:',config.faildT.length)
         },60*1000)
         _.each(diffList,function(li,ind){
-            client.add(li,{ path: './path' }, function (torrent) {
-                console.log(torrent)
-                deselected(torrent);
-                parseTorrent(torrent)
-                diffList.splice(ind,1)
-              })
+    var timeX=setTimeout(function(){
+       
+
+        client.remove(li,function(s){
+            config.faildT.push(li);
+            diffList.splice(ind,1)
+        })
+    },60*1000)
+    client.add(li,{ path: './path' }, function (torrent) {
+        console.log(torrent.infoHash,'success success')
+        clearTimeout(timeX);
+        deselected(torrent);
+        parseTorrent(torrent)
+      })
         })
     }
     console.log(diffList,55555555555)
@@ -118,20 +140,20 @@ function getMagnet(){
     }
   })
 }
-function parseT(tort){
+function parseT(tort,diffList){
     var s=config.x;
-
+    tort= _.isObject(tort)?tort.hash:tort;
     var timeX=setTimeout(function(){
        
 
-        // client.remove(tort.hash,function(s){
-        //     config.continue2=true;
-        //     config.faildT.push(tort.hash);
-        // })
+        client.remove(tort,function(s){
+            config.continue2=true;
+            config.faildT.push(tort);
+        })
     },60*1000)
     config.continue2=false;
-    client.add(tort.hash,{ path: './path' }, function (torrent) {
-        console.log(torrent)
+    client.add(tort,{ path: './path' }, function (torrent) {
+        console.log(torrent.infoHash,'success success')
         clearTimeout(timeX);
         deselected(torrent);
         parseTorrent(torrent)
