@@ -29,7 +29,7 @@
           <div class="file-path port" style="font-weight:bold">Port</div>
         </div>
         <div v-for="wire in torrent.wires" class="row file-r">
-          <div class="file-name address"><span class="glyphicon glyphicon-film"></span>
+          <div class="file-name address"></span>
             {{wire.address}}</div>
           <div class="file-path port">{{wire.port}}</div>
         </div>
@@ -51,11 +51,12 @@
           <div class="file-size" style="font-weight:bold">Size</div>
         </div>
         <div v-for="file in torrent.files" class="row file-r">
-          <div class="file-name"><span class="glyphicon glyphicon-film"></span>
+          <div class="file-name"><span class="glyphicon" :class="{'glyphicon-film':isVideo(file.name),'glyphicon-picture':isPictrue(file.name),
+          'glyphicon-music':isAudio(file.name),'glyphicon-file':isOther(file.name)}"></span>
             {{file.name}}</div>
           <div class="file-path">{{file.path}}</div>
           <div class="file-size">{{parseUnit(file.size)}}</div>
-          <div class="col-xs-12 field"><a href="https://btso.pw/video/plib_adriana_chechik_vl060118_720p_2600" class="btn btn-warning"><span
+          <div class="col-xs-12 field" v-if="isVideo(file.name)"><a href="https://btso.pw/video/plib_adriana_chechik_vl060118_720p_2600" class="btn btn-warning"><span
                 class="glyphicon glyphicon-play"></span> Play Now</a></div>
         </div>
       </div>
@@ -77,6 +78,9 @@
     mounted(){
     this.getDetailByHash(this.$route.query.hash)
   },
+  computed:{
+    
+  },
   methods:{
     async getDetailByHash(hash){
       let torrent=await getTorrentDetail({hash:hash});
@@ -84,6 +88,18 @@
       console.log(this.torrent);
       this.keywords=this.getKeywords(this.torrent.magnet);
       console.log(this.keywords);
+    },
+    isVideo(file){
+      return /\.(mp4|wav|avi|mov|3gp|flv|rmvb|mkv)/i.test(file);
+    },
+    isAudio(file){
+      return /\.(mp3|wma|aac|flac|MIDI|CD|WAVE|AIFF|APE|AMR|RealAudio|MIDI)/i.test(file);
+    },
+    isPictrue(file){
+      return /\.(bmp|jpg|png|tif|gif|svg|psd|ai|webp|raw)/i.test(file);
+    },
+    isOther(file){
+      return !this.isVideo(file)&&!this.isAudio(file)&&!this.isPictrue(file);
     },
     parseUnit:util.parseUnit,
     getKeywords(magnet){

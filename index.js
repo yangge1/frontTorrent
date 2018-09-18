@@ -22,11 +22,14 @@ var config={
 //     res.send('hello world');
 // })
 var torrentIds=[
-    // 'magnet:?xt=urn:btih:DC3E8A7E4B995116449D616583627F1D486AC6D1',
-    // 'magnet:?xt=urn:btih:C7E8FCD4DEF3D34CDC1C959A96ACA303C582E7B8',
-    // 'magnet:?xt=urn:btih:93C20335E2C896FB0C34F84240F749A09AA7E59D',
-    // 'magnet:?xt=urn:btih:8029F978BE46675D5963852CA74F152F8E62FA98'
-    // {hash:'magnet:?xt=urn:btih:70bf8d57726d9d1695a36a45079d737485c4118f'}
+//     'magnet:?xt=urn:btih:52d702d053786b137936ce797a7f0383704f8eed&dn=Inconceivable.2017.LIMITED.1080p.BluRay.x264-DRONES%5BEtHD%5D',
+//     'magnet:?xt=urn:btih:58c9d7e7ae28723763fdabebeb9108062462ee48&dn=Kaspersky_2011_Crack_v_1.53.rar',
+//     'magnet:?xt=urn:btih:c8d6c0daa1010217a68c552250c9ddc21b467ce5&dn=plib_adriana_chechik_vl060118_720p_2600.mp4',
+//     'magnet:?xt=urn:btih:DC3E8A7E4B995116449D616583627F1D486AC6D1',
+//     'magnet:?xt=urn:btih:C7E8FCD4DEF3D34CDC1C959A96ACA303C582E7B8',
+//     'magnet:?xt=urn:btih:93C20335E2C896FB0C34F84240F749A09AA7E59D',
+//     'magnet:?xt=urn:btih:8029F978BE46675D5963852CA74F152F8E62FA98',
+//     'magnet:?xt=urn:btih:70bf8d57726d9d1695a36a45079d737485c4118f',
 //     'magnet:?xt=urn:btih:52F00B76BC3D0E85ADE9FCFAE7DC2CDEF15118BE',
 //      'AA7A926FDDD7A1F9399B95E2307C7497158466CF',
 //     'magnet:?xt=urn:btih:C8ABE375A2D9BDA2A840AFD3FDF6DA9DE20881DB',
@@ -47,13 +50,14 @@ var torrentIds=[
 var metadata=[],simpleMeta=[];
 //start();
 // _.each(torrentIds,function(li,ind){
+
 //     client.add(li,{ path: './path' }, function (torrent) {
 //         console.log(torrent.infoHash,'success success')
-//         deselected(torrent);
-//         parseTorrent(torrent)
+//         testBlob(torrent)
 //       //  diffList.splice(ind,1)
 //       })
 // })
+//return;
 test()
 function start(){
     config.intervals=setInterval(function(){
@@ -83,6 +87,7 @@ async function test(){
     let listH=list.data.data;
     let detailH=detail.data.data;
    let diffList= _.difference(listH,detailH)
+   console.log(diffList)
    console.log(listH.length,detailH.length)
    console.log(diffList.length,'diffrence')
     if(!_.isEmpty(diffList)){
@@ -108,15 +113,26 @@ async function test(){
     client.add(li,{ path: './path' }, function (torrent) {
         console.log(torrent.infoHash.toUpperCase(),'success success')
        // clearTimeout(timeX);
-        deselected(torrent);
-        parseTorrent(torrent)
+       
+       deselected(torrent);
+       parseTorrent(torrent)
       })
         },100)
         
     }
   //  parseT(torrent)
 }
-
+function testBlob(torrent){
+    torrent.files.forEach(function (file) {
+        file.appendTo('.log')
+        log('(Blob URLs only work if the file is loaded from a server. "http//localhost" works. "file://" does not.)')
+        file.getBlobURL(function (err, url) {
+          if (err) return log(err.message)
+          log('File done.')
+          log('<a href="' + url + '">Download full file: ' + file.name + '</a>')
+        })
+    })
+}
 function getMagnet(){
     axios.get('http://yxysq.com:8888/api/getHash?skip='+config.skip+'&limit=100').then(function(res){
         //console.log(res.data)
