@@ -82,14 +82,11 @@ async function test(){
     let detail=await axios.get('http://yxysq.com:8888/api/torrent/getDetailByDup');
     let listH=list.data.data;
     let detailH=detail.data.data;
-    console.log(listH,33333333333);
-    console.log(detailH,4444444444444444444)
    let diffList= _.difference(listH,detailH)
     if(!_.isEmpty(diffList)){
-        console.log(diffList,'length:',diffList.length)
         torrentIds=diffList;
         setInterval(function(){
-            console.log(diffList,'length:',diffList.length)
+       //     console.log(diffList,'length:',diffList.length)
             console.log(config.faildT,'config.faildT.length:',config.faildT.length)
         },60*1000)
         let testT=setInterval(function(){
@@ -101,10 +98,10 @@ async function test(){
             var timeX=setTimeout(function(){
        
 
-        client.remove(li,function(s){
-            config.faildT.push(li);
-            diffList.splice(diffList.indexOf(li),1)
-        })
+        // client.remove(li,function(s){
+        //     config.faildT.push(li);
+        //     diffList.splice(diffList.indexOf(li),1)
+        // })
     },60*1000)
     client.add(li,{ path: './path' }, function (torrent) {
         console.log(torrent.infoHash,'success success')
@@ -115,7 +112,6 @@ async function test(){
         },100)
         
     }
-    console.log(diffList,55555555555)
   //  parseT(torrent)
 }
 
