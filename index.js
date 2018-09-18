@@ -83,6 +83,8 @@ async function test(){
     let listH=list.data.data;
     let detailH=detail.data.data;
    let diffList= _.difference(listH,detailH)
+   console.log(listH.length,detailH.length)
+   console.log(diffList.length,'diffrence')
     if(!_.isEmpty(diffList)){
         torrentIds=diffList;
         setInterval(function(){
@@ -95,17 +97,17 @@ async function test(){
                 clearInterval(testT);
                 return;
             }
-            var timeX=setTimeout(function(){
+    //         var timeX=setTimeout(function(){
        
 
-        // client.remove(li,function(s){
-        //     config.faildT.push(li);
-        //     diffList.splice(diffList.indexOf(li),1)
-        // })
-    },60*1000)
+    //     client.remove(li,function(s){
+    //         config.faildT.push(li);
+    //         diffList.splice(diffList.indexOf(li),1)
+    //     })
+    // },60*1000)
     client.add(li,{ path: './path' }, function (torrent) {
-        console.log(torrent.infoHash,'success success')
-        clearTimeout(timeX);
+        console.log(torrent.infoHash.toUpperCase(),'success success')
+       // clearTimeout(timeX);
         deselected(torrent);
         parseTorrent(torrent)
       })
@@ -176,7 +178,7 @@ function parseTorrent(torrent){
     //     axios.post('http://yxysq.com:8888/api/torrent/addList',simpleMeta.splice(0,100))
     // }
     var files=[],wires=[];
-    var infoHash=torrent.infoHash
+    var infoHash=torrent.infoHash.toUpperCase()
     var createDate=torrent['creation date'];
     if(createDate){
         console.log(new Date(torrent['creation date']*1000))
@@ -208,10 +210,14 @@ function parseTorrent(torrent){
     })
 
     if(metadata.length>=1){
-        axios.post('http://yxysq.com:8888/api/torrent/addDetail',metadata.splice(0,100))
+        axios.post('http://yxysq.com:8888/api/torrent/addDetail',metadata.splice(0,100)).then(function(){}).catch(function(err){
+            console.log(err,'addDetail')
+        })
     }
     if(simpleMeta.length>=1){
-        axios.post('http://yxysq.com:8888/api/torrent/addList',simpleMeta.splice(0,100))
+        axios.post('http://yxysq.com:8888/api/torrent/addList',simpleMeta.splice(0,100)).then(function(){}).catch(function(err){
+            console.log(err,'addList')
+        })
     }
 }
 function parseUnit(size){

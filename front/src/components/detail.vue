@@ -23,6 +23,17 @@
         <div class="col-md-2 col-sm-3 field">Convert On:</div>
         <div class="col-md-10 col-sm-9 value">{{torrent.createDate}}</div>
       </div>
+      <div class="detail data-list" style="margin-bottom:10px;">
+        <div class="row file-r">
+          <div class="file-name address" style="font-weight:bold">Address</div>
+          <div class="file-path port" style="font-weight:bold">Port</div>
+        </div>
+        <div v-for="wire in torrent.wires" class="row file-r">
+          <div class="file-name address"><span class="glyphicon glyphicon-film"></span>
+            {{wire.address}}</div>
+          <div class="file-path port">{{wire.port}}</div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-2 col-sm-3 field">Keywords:</div>
         <div class="col-md-10 col-sm-9 value tags-box">
@@ -32,6 +43,7 @@
             <div class="col-md-10 col-sm-9 value"><textarea class="magnet-link" readonly="" v-model="torrent.magnet"></textarea></div>
         </div>
       </div>
+      
       <div class="detail data-list">
         <div class="row file-r">
           <div class="file-name" style="font-weight:bold">File Name</div>
@@ -42,7 +54,7 @@
           <div class="file-name"><span class="glyphicon glyphicon-film"></span>
             {{file.name}}</div>
           <div class="file-path">{{file.path}}</div>
-          <div class="file-size">{{file.size}}</div>
+          <div class="file-size">{{parseUnit(file.size)}}</div>
           <div class="col-xs-12 field"><a href="https://btso.pw/video/plib_adriana_chechik_vl060118_720p_2600" class="btn btn-warning"><span
                 class="glyphicon glyphicon-play"></span> Play Now</a></div>
         </div>
@@ -51,6 +63,7 @@
 </template>
 <script>
   import {getCount,getTorrentDetail} from '../server/api'
+  import util from '../util'
   export default {
     data(){
       return {
@@ -72,6 +85,7 @@
       this.keywords=this.getKeywords(this.torrent.magnet);
       console.log(this.keywords);
     },
+    parseUnit:util.parseUnit,
     getKeywords(magnet){
       let reg=/(.+)&dn=(.+)&?/gi;
       let str=magnet.replace(reg,'$2');
@@ -99,12 +113,6 @@
     height: 100%;
     background-color: #f6f2e6;
 
-    @font-face {
-      font-family: 'Glyphicons Halflings';
-      src: url('../fonts/glyphicons-halflings-regular.eot');
-      src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
-    }
-
     .glyphicon {
       position: relative;
       top: 1px;
@@ -122,15 +130,21 @@
     }
 
     .file-name {
-      width: 80%;
+      width: 60%;
       display: inline-block;
       font-size: 16px;
+      &.address{
+        width:90%;
+      }
     }
 
-    .file.path {
-      width: 10%;
+    .file-path {
+      width: 30%;
       display: inline-block;
       font-size: 16px;
+      &.port{
+        width:10%;
+      }
     }
 
     .file-size {
@@ -362,5 +376,9 @@
   body {
     margin: 0px;
   }
-
+@font-face {
+      font-family: 'Glyphicons Halflings';
+      src: url('../fonts/glyphicons-halflings-regular.eot');
+      src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+    }
 </style>
