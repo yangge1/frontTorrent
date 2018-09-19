@@ -6,6 +6,11 @@ var bencode=require('bencode');
 var fs=require('fs');
 var jsn=require('circular-json');
 var _=require('underscore');
+var http=require('http');
+// var server=http.createServer(function(req,res){
+//     res.
+// })
+// server.listen(8089);
 // app.use(bodyPaser.urlencoded({ extended: false ,limit: '2mb'}));
 // app.use(bodyPaser.json({limit: '2mb'}));
 var config={
@@ -22,6 +27,7 @@ var config={
 //     res.send('hello world');
 // })
 var torrentIds=[
+    'magnet:?xt=urn:btih:08ada5a7a6183aae1e09d831df6748d566095a10&dn=Sintel&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&ws=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2F&xs=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2Fsintel.torrent'
 //     'magnet:?xt=urn:btih:52d702d053786b137936ce797a7f0383704f8eed&dn=Inconceivable.2017.LIMITED.1080p.BluRay.x264-DRONES%5BEtHD%5D',
 //     'magnet:?xt=urn:btih:58c9d7e7ae28723763fdabebeb9108062462ee48&dn=Kaspersky_2011_Crack_v_1.53.rar',
 //     'magnet:?xt=urn:btih:c8d6c0daa1010217a68c552250c9ddc21b467ce5&dn=plib_adriana_chechik_vl060118_720p_2600.mp4',
@@ -49,16 +55,19 @@ var torrentIds=[
 //axios.post('http://yxysq.com:8888/api/torrent/addList',{body:[{name:'123',hash:'234',size:123}]})
 var metadata=[],simpleMeta=[];
 //start();
-// _.each(torrentIds,function(li,ind){
+_.each(torrentIds,function(li,ind){
 
-//     client.add(li,{ path: './path' }, function (torrent) {
-//         console.log(torrent.infoHash,'success success')
-//         testBlob(torrent)
-//       //  diffList.splice(ind,1)
-//       })
-// })
+    client.add(li,{ path: './path' }, function (torrent) {
+        console.log(torrent.infoHash.toUpperCase(),'success success')
+       // clearTimeout(timeX);
+       
+       deselected(torrent);
+       parseTorrent(torrent)
+      //  diffList.splice(ind,1)
+      })
+})
 //return;
-test()
+//test()
 function start(){
     config.intervals=setInterval(function(){
         magnetTotorrent()

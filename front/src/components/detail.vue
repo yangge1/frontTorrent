@@ -28,11 +28,14 @@
           <div class="file-name address" style="font-weight:bold">Address</div>
           <div class="file-path port" style="font-weight:bold">Port</div>
         </div>
-        <div v-for="wire in torrent.wires" class="row file-r">
-          <div class="file-name address"></span>
+        <div v-if="torrent.wires&&torrent.wires[0]">
+          <div v-for="wire in torrent.wires" class="row file-r">
+          <div class="file-name address">
             {{wire.address}}</div>
           <div class="file-path port">{{wire.port}}</div>
         </div>
+        </div>
+        
       </div>
       <div class="row">
         <div class="col-md-2 col-sm-3 field">Keywords:</div>
@@ -50,6 +53,7 @@
           <div class="file-path" style="font-weight:bold">File Path</div>
           <div class="file-size" style="font-weight:bold">Size</div>
         </div>
+        <div @click="toPlay(torrent.hash)">view all</div>
         <div v-for="file in torrent.files" class="row file-r">
           <div class="file-name"><span class="glyphicon" :class="{'glyphicon-film':isVideo(file.name),'glyphicon-picture':isPictrue(file.name),
           'glyphicon-music':isAudio(file.name),'glyphicon-file':isOther(file.name)}"></span>
@@ -88,6 +92,14 @@
       console.log(this.torrent);
       this.keywords=this.getKeywords(this.torrent.magnet);
       console.log(this.keywords);
+    },
+    toPlay(hash){
+          this.$router.push({
+          path: 'play',
+          query: {
+            torrentId: hash
+          }
+        })
     },
     isVideo(file){
       return /\.(mp4|wav|avi|mov|3gp|flv|rmvb|mkv)/i.test(file);
