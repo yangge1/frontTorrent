@@ -53,7 +53,7 @@
           <div class="file-path" style="font-weight:bold">File Path</div>
           <div class="file-size" style="font-weight:bold">Size</div>
         </div>
-        <div @click="toPlay(torrent.hash)">view all</div>
+        <div @click="toPlay(torrent.magnet)">view all</div>
         <div v-for="file in torrent.files" class="row file-r">
           <div class="file-name"><span class="glyphicon" :class="{'glyphicon-film':isVideo(file.name),'glyphicon-picture':isPictrue(file.name),
           'glyphicon-music':isAudio(file.name),'glyphicon-file':isOther(file.name)}"></span>
