@@ -1,11 +1,11 @@
 <template>
     <div class="play-class">
-        <div class="view"></div>
         <div class="desc">
             <span>Adding {{torrentId}}</span>
-            <span>Got torrent metadata! {{torrentId}}</span>
             <span>{{process}}</span>
         </div>
+        <div class="view"></div>
+        
     </div>
 </template>
 <script>
@@ -18,17 +18,23 @@ export default {
             process:''
         }
     },
+    mounted() {
+        if(!this.torrentId){
+    //        this.start(this.$router.history.current.query.torrentId)
+          }
+        console.warn(this.$router.history.current.query.torrentId)
+    },
     methods:{
-        start(){
+        start(tod){
             var self=this;
         var client = new WebTorrent()
 
       client.on('error', function (err) {
+          
         console.error('ERROR: ' + err.message)
       })
 
-      var torrentId = self.torrentId;
-        log('Adding ' + torrentId)
+      var torrentId = tod||self.torrentId;
         client.add(torrentId, onTorrent)
 
       function onTorrent (torrent) {
@@ -43,15 +49,22 @@ export default {
           self.process='Progress: 100%';
           clearInterval(interval)
         })
-        var file = torrent.files.find(function (file) {
-                return file.name.endsWith('.mp4')
-            })
-            file.appendTo('.view')
+        // var file = torrent.files.find(function (file) {
+        //         return file.name.endsWith('.mp4')
+        //     })
+        //     file.appendTo('.view')
         // Render all files into to the page
         torrent.files.forEach(function (file) {
-          file.appendTo('.view')
+           
+             if(file.name.endsWith('.mp4')){
+                 file.appendTo('.view')
+                 return;
+             }
+             
           file.getBlobURL(function (err, url) {
+
             if (err) return log(err.message)
+            file.appendTo('.view')
             log('File done.')
             log('<a href="' + url + '">Download full file: ' + file.name + '</a>')
           })
@@ -65,15 +78,18 @@ function log (str) {
         }
     },
     beforeRouteEnter (to, from, next) {
-      if(from.name==='Tdetail'){
-       return next(vm=>{
+        console.warn(11111111111111111);
+      return next(vm=>{
           vm.torrentId=to.query.torrentId;
           vm.start();
       })
-      }
-      next()
       
   }
 }
 </script>
+<style>
+body{
+        overflow: auto;
+    }
+</style>
 
